@@ -1,0 +1,26 @@
+---
+# From GitHub's apt repository, https://github.com/cli/cli/blob/trunk/docs/install_linux.md
+# Ubuntu's own gh package is an old community build that GitHub says is broken.
+# Signing in is a one-time manual step: gh auth login
+- name: Download the GitHub CLI signing key
+  ansible.builtin.get_url:
+    url: https://cli.github.com/packages/githubcli-archive-keyring.gpg
+    dest: /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    mode: "0644"
+    force: true # fetch it every run, so a renewed key gets picked up
+
+- name: Add the GitHub CLI repository
+  ansible.builtin.copy:
+    content: >
+      deb [signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg]
+      https://cli.github.com/packages stable main
+    dest: /etc/apt/sources.list.d/github-cli.list
+    mode: "0644"
+  register: gh_repo
+
+- name: Install the GitHub CLI
+  ansible.builtin.apt:
+    name: gh
+    update_cache: "{{ gh_repo is changed }}"
+  # --check doesn't write the repo file, so the package can't be found yet
+  when: not (ansible_check_mode and gh_repo is changed)

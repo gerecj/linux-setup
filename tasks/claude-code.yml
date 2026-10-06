@@ -1,0 +1,16 @@
+---
+# Claude Code's official installer, same as `curl -fsSL https://claude.ai/install.sh | bash`.
+# It installs for the user running the playbook: ~/.local/bin/claude, files in
+# ~/.local/share/claude. Claude Code keeps itself up to date from there.
+- name: Download the Claude Code installer
+  ansible.builtin.uri:
+    url: https://claude.ai/install.sh
+    return_content: true
+  register: claude_code_installer
+  check_mode: false # only reads, so it's fine to run with --check too
+
+- name: Run the Claude Code installer
+  ansible.builtin.command: bash -s
+  args:
+    stdin: "{{ claude_code_installer.content }}"
+    creates: ~/.local/bin/claude

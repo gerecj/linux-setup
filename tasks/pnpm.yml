@@ -1,0 +1,15 @@
+---
+# pnpm's official standalone installer, same as `curl -fsSL https://get.pnpm.io/install.sh | sh -`.
+# For the user running the playbook: ~/.local/share/pnpm, added to PATH in ~/.bashrc.
+- name: Download the pnpm installer
+  ansible.builtin.uri:
+    url: https://get.pnpm.io/install.sh
+    return_content: true
+  register: pnpm_installer
+  check_mode: false # only reads, so it's fine to run with --check too
+
+- name: Run the pnpm installer
+  ansible.builtin.command: sh -s
+  args:
+    stdin: "{{ pnpm_installer.content }}"
+    creates: ~/.local/share/pnpm/bin/pnpm

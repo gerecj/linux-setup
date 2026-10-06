@@ -1,0 +1,21 @@
+---
+# From Brave's apt repository, same files and paths as https://brave.com/linux/
+- name: Download the Brave signing key
+  ansible.builtin.get_url:
+    url: https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+    dest: /usr/share/keyrings/brave-browser-archive-keyring.gpg
+    mode: "0644"
+
+- name: Add the Brave repository
+  ansible.builtin.get_url:
+    url: https://brave-browser-apt-release.s3.brave.com/brave-browser.sources
+    dest: /etc/apt/sources.list.d/brave-browser-release.sources
+    mode: "0644"
+  register: brave_repo
+
+- name: Install Brave
+  ansible.builtin.apt:
+    name: brave-browser
+    update_cache: "{{ brave_repo is changed }}"
+  # --check doesn't write the repo file, so the package can't be found yet
+  when: not (ansible_check_mode and brave_repo is changed)

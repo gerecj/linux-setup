@@ -1,0 +1,22 @@
+---
+# Codex's official installer, same as `curl -fsSL https://chatgpt.com/codex/install.sh | sh`.
+# It installs for the user running the playbook: ~/.local/bin/codex, files in ~/.codex.
+- name: Install bubblewrap, Codex warns at startup without it
+  ansible.builtin.apt:
+    name: bubblewrap
+  become: true
+
+- name: Download the Codex installer
+  ansible.builtin.uri:
+    url: https://chatgpt.com/codex/install.sh
+    return_content: true
+  register: codex_installer
+  check_mode: false # only reads, so it's fine to run with --check too
+
+- name: Run the Codex installer
+  ansible.builtin.command: sh -s
+  args:
+    stdin: "{{ codex_installer.content }}"
+    creates: ~/.local/bin/codex
+  environment:
+    CODEX_NON_INTERACTIVE: "1" # otherwise it can ask "Start Codex now?" and wait

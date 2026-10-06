@@ -1,0 +1,23 @@
+---
+# fnm's official installer, same as `curl -fsSL https://fnm.vercel.app/install | bash`,
+# then the current LTS Node.js. For the user running the playbook: fnm lives in
+# ~/.local/share/fnm and the installer hooks it into ~/.bashrc.
+- name: Download the fnm installer
+  ansible.builtin.uri:
+    url: https://fnm.vercel.app/install
+    return_content: true
+  register: fnm_installer
+  check_mode: false # only reads, so it's fine to run with --check too
+
+# Only once, the installer appends to ~/.bashrc every time it runs
+- name: Run the fnm installer
+  ansible.builtin.command: bash -s
+  args:
+    stdin: "{{ fnm_installer.content }}"
+    creates: ~/.local/share/fnm/fnm
+
+# The first version fnm installs becomes the default
+- name: Install the current LTS Node.js
+  ansible.builtin.command: ~/.local/share/fnm/fnm install --lts
+  args:
+    creates: ~/.local/share/fnm/aliases/default

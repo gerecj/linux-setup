@@ -1,0 +1,29 @@
+---
+# From Microsoft's apt repository, https://code.visualstudio.com/docs/setup/linux
+# The code package adds its own copy of this repo on install unless it finds one,
+# so the repo has to be set up first.
+- name: Download the Microsoft signing key
+  ansible.builtin.get_url:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    dest: /etc/apt/keyrings/microsoft.asc
+    mode: "0644"
+    force: true # fetch it every run, so a renewed key gets picked up
+
+- name: Add the VS Code repository
+  ansible.builtin.copy:
+    content: |
+      Types: deb
+      URIs: https://packages.microsoft.com/repos/code
+      Suites: stable
+      Components: main
+      Signed-By: /etc/apt/keyrings/microsoft.asc
+    dest: /etc/apt/sources.list.d/vscode.sources
+    mode: "0644"
+  register: vscode_repo
+
+- name: Install VS Code
+  ansible.builtin.apt:
+    name: code
+    update_cache: "{{ vscode_repo is changed }}"
+  # --check doesn't write the repo file, so the package can't be found yet
+  when: not (ansible_check_mode and vscode_repo is changed)

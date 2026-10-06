@@ -1,0 +1,67 @@
+---
+- name: Configure this machine
+  hosts: localhost
+  connection: local
+
+  pre_tasks:
+    - name: Check the playbook isn't run as root
+      ansible.builtin.assert:
+        that: ansible_facts.user_id != 'root'
+        fail_msg: >-
+          Run it as your regular user with -K, not with sudo. fnm, pnpm, uv, Codex
+          and Claude Code install for whoever runs it, and so does Docker access.
+        quiet: true
+      tags: always
+
+  # Everything runs as you, the system-wide parts switch to root with become
+  tasks:
+    # Always, other parts need things from it (e.g. unzip for fnm)
+    - name: Packages
+      ansible.builtin.import_tasks: tasks/packages.yml
+      become: true
+      tags: [always, packages]
+
+    - name: Desktop
+      ansible.builtin.import_tasks: tasks/desktop.yml
+      become: true
+      tags: desktop
+
+    - name: VS Code
+      ansible.builtin.import_tasks: tasks/vscode.yml
+      become: true
+      tags: vscode
+
+    - name: Brave
+      ansible.builtin.import_tasks: tasks/brave.yml
+      become: true
+      tags: brave
+
+    - name: Docker
+      ansible.builtin.import_tasks: tasks/docker.yml
+      become: true
+      tags: docker
+
+    - name: GitHub CLI
+      ansible.builtin.import_tasks: tasks/gh.yml
+      become: true
+      tags: gh
+
+    - name: Node.js
+      ansible.builtin.import_tasks: tasks/node.yml
+      tags: node
+
+    - name: Node package manager (pnpm)
+      ansible.builtin.import_tasks: tasks/pnpm.yml
+      tags: pnpm
+
+    - name: Python (uv)
+      ansible.builtin.import_tasks: tasks/uv.yml
+      tags: uv
+
+    - name: Codex
+      ansible.builtin.import_tasks: tasks/codex.yml
+      tags: codex
+
+    - name: Claude Code
+      ansible.builtin.import_tasks: tasks/claude-code.yml
+      tags: claude-code

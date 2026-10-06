@@ -1,0 +1,15 @@
+---
+# uv's official installer, same as `curl -LsSf https://astral.sh/uv/install.sh | sh`.
+# For the user running the playbook: ~/.local/bin/uv and uvx.
+- name: Download the uv installer
+  ansible.builtin.uri:
+    url: https://astral.sh/uv/install.sh
+    return_content: true
+  register: uv_installer
+  check_mode: false # only reads, so it's fine to run with --check too
+
+- name: Run the uv installer
+  ansible.builtin.command: sh -s
+  args:
+    stdin: "{{ uv_installer.content }}"
+    creates: ~/.local/bin/uv

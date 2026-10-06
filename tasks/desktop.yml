@@ -1,0 +1,16 @@
+---
+# KDE Plasma for when a monitor is plugged in. The machine still boots to the console,
+# the login screen (SDDM) only starts with `sudo systemctl start display-manager`.
+- name: Install KDE Plasma
+  ansible.builtin.apt:
+    name: kde-plasma-desktop
+    # SDDM, KWin and the X server are only recommends, Plasma doesn't work without them
+    install_recommends: true
+
+# Same as `systemctl set-default multi-user.target`. Ubuntu defaults to
+# graphical.target, which would start SDDM on every boot now that it's installed.
+- name: Boot to the console
+  ansible.builtin.file:
+    src: /usr/lib/systemd/system/multi-user.target
+    dest: /etc/systemd/system/default.target
+    state: link

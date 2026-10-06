@@ -1,0 +1,22 @@
+---
+- name: Install packages
+  ansible.builtin.apt:
+    name:
+      - build-essential
+      - curl
+      - git
+      - htop
+      - jq
+      - micro
+      - nano
+      - openssh-server
+      - pkg-config
+      - ripgrep
+      - rsync
+      - shellcheck
+      - tree
+      - unzip
+      - wget
+      - zip
+    update_cache: true
+    cache_valid_time: 3600
