@@ -65,3 +65,11 @@
     - name: Claude Code
       ansible.builtin.import_tasks: tasks/claude-code.yml
       tags: claude-code
+
+  # Handlers run at the end of the play, after everything has been downloaded
+  handlers:
+    # The machine may get a new IP from DHCP, an SSH session to the old one drops
+    - name: Apply the network config
+      ansible.builtin.command: netplan apply
+      become: true
+      changed_when: true

@@ -40,6 +40,10 @@ a failed run is still there after the terminal is gone.
    without sudo.
 1. Run `gh auth login` for GitHub, then `codex` and `claude` once each to sign in.
 
+The first run hands the network from systemd-networkd to NetworkManager, as on
+Kubuntu. The machine may get a new IP from that, so if SSH drops at the end of the
+run, look up the new one on the console with `ip -4 a`.
+
 ## Layout
 
 ```
