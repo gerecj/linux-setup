@@ -64,13 +64,24 @@ the install), see `/etc/ssh/sshd_config.d/50-cloud-init.conf`.
 ## Desktop
 
 The server runs headless, but KDE Plasma is installed for when you need it. It boots
-to the text console, so to get a desktop, plug in a monitor and start the login
-screen:
+to the text console, so plug in a monitor and log in there. The quickest way to a
+desktop is to start Plasma right away, no login screen and no sudo:
+
+```sh
+startplasma-wayland   # Plasma as the user logged in on the console
+```
+
+Logging out of Plasma brings you back to the console.
+
+Or start the login screen (SDDM), e.g. to log in as someone else:
 
 ```sh
 sudo systemctl start display-manager   # SDDM login screen, pick the Plasma session
 sudo systemctl stop display-manager    # back to headless, ends the desktop session
 ```
+
+Logging out of a session started from SDDM only goes back to the login screen, so
+stop SDDM to get back to the console.
 
 ## What's installed
 
