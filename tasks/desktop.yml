@@ -33,6 +33,15 @@
     mode: "0600"
   notify: Apply the network config
 
+- name: Turn off systemd-networkd
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    enabled: false
+  loop:
+    - systemd-networkd.service
+    - systemd-networkd.socket
+    - systemd-networkd-wait-online.service
+
 # Same as `systemctl set-default multi-user.target`. Ubuntu defaults to
 # graphical.target, which would start SDDM on every boot now that it's installed.
 - name: Boot to the console

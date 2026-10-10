@@ -10,7 +10,8 @@ Ubuntu Server 26.04, a user with sudo rights, `ansible-core` and `git`:
 Over SSH, start `tmux` first, so `apt` and the playbook keep running if the connection drops.
 
 ```sh
-sudo apt update && sudo apt install ansible-core git
+sudo apt update && sudo apt upgrade
+sudo apt install ansible-core git
 ```
 
 ## Usage
@@ -35,14 +36,13 @@ a failed run is still there after the terminal is gone.
 
 ## After the first run
 
-1. Log out and back in (or open a new SSH session). That puts `~/.local/bin`, fnm
-   and pnpm on your PATH, and makes the `docker` group apply, so `docker` works
-   without sudo.
+1. Reboot (`sudo reboot`). That finishes handing the network from systemd-networkd
+   to NetworkManager, puts `~/.local/bin`, fnm and pnpm on your PATH, and makes the
+   `docker` group apply, so `docker` works without sudo.
 1. Run `gh auth login` for GitHub, then `codex` and `claude` once each to sign in.
 
-The first run hands the network from systemd-networkd to NetworkManager, as on
-Kubuntu. The machine may get a new IP from that, so if SSH drops at the end of the
-run, look up the new one on the console with `ip -4 a`.
+The network switch, as on Kubuntu, can give the machine a new IP. If SSH drops at the
+end of the run, look up the new one on the console with `ip -4 a`.
 
 ## Layout
 
