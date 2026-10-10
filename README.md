@@ -5,10 +5,12 @@ there's no control node, inventory or SSH. Clone the repo and run the playbook.
 
 ## Prerequisites
 
-Ubuntu Server 26.04, a user with sudo rights, and `ansible-core` and `git`:
+Ubuntu Server 26.04, a user with sudo rights, `ansible-core` and `git`:
+
+Over SSH, start `tmux` first, so `apt` and the playbook keep running if the connection drops.
 
 ```sh
-sudo apt install ansible-core git
+sudo apt update && sudo apt install ansible-core git
 ```
 
 ## Usage
@@ -27,6 +29,9 @@ running the playbook, so the playbook refuses to run as root.
 ansible-playbook local.yml -K --check --diff    # dry run, show what would change
 ansible-playbook local.yml -K --tags packages   # run only part of it
 ```
+
+Every run, dry runs included, is appended to `ansible.log` in the repo, so the output of
+a failed run is still there after the terminal is gone.
 
 ## After the first run
 
