@@ -3,9 +3,24 @@
 # the login screen (SDDM) only starts with `sudo systemctl start display-manager`.
 - name: Install KDE Plasma
   ansible.builtin.apt:
-    name: kde-plasma-desktop
-    # SDDM, KWin and the X server are only recommends, Plasma doesn't work without them
+    name:
+      - kde-plasma-desktop
+      - sddm-theme-breeze
     install_recommends: true
+
+- name: Create the SDDM config directory
+  ansible.builtin.file:
+    path: /etc/sddm.conf.d
+    state: directory
+    mode: "0755"
+
+- name: Use the Breeze login screen theme
+  ansible.builtin.copy:
+    content: |
+      [Theme]
+      Current=breeze
+    dest: /etc/sddm.conf.d/breeze.conf
+    mode: "0644"
 
 # Same as `systemctl set-default multi-user.target`. Ubuntu defaults to
 # graphical.target, which would start SDDM on every boot now that it's installed.
