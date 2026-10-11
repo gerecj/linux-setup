@@ -40,6 +40,10 @@ Every run is appended to `ansible.log` in the repo so that it can be inspected l
    to NetworkManager, puts `~/.local/bin`, fnm and pnpm on your PATH, and makes the
    `docker` group apply, so `docker` works without sudo.
 1. Run `gh auth login` for GitHub, then `codex` and `claude` once each to sign in.
+   Use `gh auth login --insecure-storage` and pick HTTPS, so the token is kept in a
+   file (readable only by you) that the T3 Code service can use for git. In the
+   desktop's keyring it would be locked whenever the machine runs headless.
+1. Run `t3 connect` to reach T3 Code from your other devices through T3 Connect.
 
 The network switch can give the machine a new IP. If SSH drops at the end of the
 run, look up the new one on the console with `ip -4 a`.
@@ -77,6 +81,7 @@ sudo systemctl start getty@tty1        # SDDM took over tty1, bring its login pr
 | uv                                                    | you      | official installer            | `uv self update`                                        |
 | Codex                                                 | you      | official installer            | `curl -fsSL https://chatgpt.com/codex/install.sh \| sh` |
 | Claude Code                                           | you      | official installer            | updates itself                                          |
+| T3 Code, as a background service                      | you      | official installer            | `t3 update`                                             |
 
 "You" means the user who ran the playbook; those tools live under your home
 directory. pnpm doesn't depend on the Node version and switches to the version a

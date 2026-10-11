@@ -1,0 +1,32 @@
+---
+# T3 Code's official installer, same as `curl -fsSL https://t3.codes/install.sh | sh`.
+# For the user running the playbook: ~/.local/bin/t3, files in ~/.t3. It runs as a
+# background service, so agents keep working with nobody logged in.
+- name: Download the T3 Code installer
+  ansible.builtin.uri:
+    url: https://t3.codes/install.sh
+    return_content: true
+  register: t3code_installer
+  check_mode: false # only reads, so it's fine to run with --check too
+
+- name: Run the T3 Code installer
+  ansible.builtin.command: sh -s
+  args:
+    stdin: "{{ t3code_installer.content }}"
+    creates: ~/.local/bin/t3
+
+# Starts your user services at boot and keeps them running after logout. `t3 service
+# install` tries this itself, but polkit refuses it over SSH without a password.
+- name: Let your user services run without a login (lingering)
+  ansible.builtin.command: loginctl enable-linger {{ ansible_facts.user_id }}
+  args:
+    creates: /var/lib/systemd/linger/{{ ansible_facts.user_id }}
+  become: true
+
+- name: Install and start the T3 Code background service
+  ansible.builtin.command: ~/.local/bin/t3 service install
+  args:
+    creates: ~/.config/systemd/user/t3code.service
+  environment:
+    # systemctl --user needs it, and it's missing when not run from a login session
+    XDG_RUNTIME_DIR: /run/user/{{ ansible_facts.user_uid }}

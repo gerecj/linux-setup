@@ -66,6 +66,10 @@
       ansible.builtin.import_tasks: tasks/claude-code.yml
       tags: claude-code
 
+    - name: T3 Code
+      ansible.builtin.import_tasks: tasks/t3code.yml
+      tags: t3code
+
   # Handlers run at the end of the play, after everything has been downloaded
   handlers:
     # The machine may get a new IP from DHCP, an SSH session to the old one drops
