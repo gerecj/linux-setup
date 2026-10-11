@@ -13,3 +13,14 @@
   args:
     stdin: "{{ pnpm_installer.content }}"
     creates: ~/.local/share/pnpm/bin/pnpm
+
+# ~/.bashrc returns early in non-interactive shells, so agents (e.g. started by T3
+# Code) wouldn't find pnpm
+- name: Put pnpm on PATH in ~/.profile
+  ansible.builtin.blockinfile:
+    path: ~/.profile
+    marker: "# {mark} pnpm, for non-interactive shells (linux-setup)"
+    insertbefore: BOF
+    block: |
+      export PNPM_HOME="$HOME/.local/share/pnpm"
+      PATH="$PNPM_HOME/bin:$PATH"

@@ -21,3 +21,14 @@
   ansible.builtin.command: ~/.local/share/fnm/fnm install --lts
   args:
     creates: ~/.local/share/fnm/aliases/default
+
+# ~/.bashrc returns early in non-interactive shells, so agents (e.g. started by T3
+# Code) wouldn't find node. At the top of ~/.profile, before it loads ~/.bashrc,
+# where `fnm env` puts the per-project version in front again.
+- name: Put the default Node.js on PATH in ~/.profile
+  ansible.builtin.blockinfile:
+    path: ~/.profile
+    marker: "# {mark} fnm default Node.js, for non-interactive shells (linux-setup)"
+    insertbefore: BOF
+    block: |
+      PATH="$HOME/.local/share/fnm/aliases/default/bin:$PATH"
