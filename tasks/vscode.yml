@@ -29,12 +29,6 @@
     mode: "0644"
   register: vscode_repo
 
-# The package's own copy of the key, from when it managed the repo itself
-- name: Remove the VS Code package's copy of the signing key
-  ansible.builtin.file:
-    path: /usr/share/keyrings/microsoft.gpg
-    state: absent
-
 - name: Install VS Code
   ansible.builtin.apt:
     name: code
