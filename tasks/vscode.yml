@@ -1,7 +1,15 @@
 ---
 # From Microsoft's apt repository, https://code.visualstudio.com/docs/setup/linux
-# The code package adds its own copy of this repo on install unless it finds one,
-# so the repo has to be set up first.
+# The code package manages this repo itself unless told not to: on every upgrade the
+# old version's postrm deletes vscode.sources (ours too), then the new one asks to
+# add its own. Answering "no" up front makes its scripts leave the repo alone.
+- name: Keep the VS Code package from managing its apt repository
+  ansible.builtin.debconf:
+    name: code
+    question: code/add-microsoft-repo
+    vtype: boolean
+    value: "false"
+
 - name: Download the Microsoft signing key
   ansible.builtin.get_url:
     url: https://packages.microsoft.com/keys/microsoft.asc
@@ -20,6 +28,12 @@
     dest: /etc/apt/sources.list.d/vscode.sources
     mode: "0644"
   register: vscode_repo
+
+# The package's own copy of the key, from when it managed the repo itself
+- name: Remove the VS Code package's copy of the signing key
+  ansible.builtin.file:
+    path: /usr/share/keyrings/microsoft.gpg
+    state: absent
 
 - name: Install VS Code
   ansible.builtin.apt:
