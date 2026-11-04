@@ -1,0 +1,17 @@
+---
+# Ubuntu Server installs apport (the ubuntu-server package depends on it, so it stays
+# installed) and makes it the kernel's handler for every crashing program. It spends at
+# least a second on each crash, one crash at a time: for any program with a D-Bus session,
+# such as one started by the T3 Code service, it asks GNOME's session manager whether the
+# session is closing, then sleeps a second before reading the answer. It then ignores
+# programs that aren't from Ubuntu packages anyway. Test suites that crash programs on
+# purpose slow to a crawl.
+#
+# Stopping the service resets the handler to the kernel's default ("core"), and a disabled
+# service stays disabled across package upgrades. With the default `ulimit -c 0`, crashes
+# then leave no core files.
+- name: Turn off apport crash reports
+  ansible.builtin.systemd_service:
+    name: apport.service
+    enabled: false
+    state: stopped

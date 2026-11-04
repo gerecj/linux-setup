@@ -83,6 +83,10 @@ sudo systemctl start getty@tty1        # SDDM took over tty1, bring its login pr
 | Claude Code                                           | you      | official installer            | updates itself                                          |
 | T3 Code, as a background service                      | you      | official installer            | `t3 update`                                             |
 
+Ubuntu's crash reporter, apport, is turned off (`tasks/apport.yml`): it handles crashes
+one at a time, at a second or more each, which slows down test suites that crash
+programs on purpose. `sudo systemctl enable --now apport` turns it back on.
+
 "You" means the user who ran the playbook; those tools live under your home
 directory. pnpm doesn't depend on the Node version and switches to the version a
 project pins. Being in the `docker` group is effectively root access.

@@ -26,6 +26,11 @@
       become: true
       tags: desktop
 
+    - name: Crash reports (apport) off
+      ansible.builtin.import_tasks: tasks/apport.yml
+      become: true
+      tags: apport
+
     - name: VS Code
       ansible.builtin.import_tasks: tasks/vscode.yml
       become: true
