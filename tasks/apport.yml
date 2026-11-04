@@ -1,7 +1,7 @@
 ---
 # Ubuntu Server's crash reporter. It handles crashes one at a time, a second or more each:
-# for every crash it asks GNOME's session manager whether the session is closing, even
-# without GNOME, and waits a second for the answer. That slows down test suites that crash
+# when the program has a D-Bus user session, it asks GNOME's session manager whether the
+# session is closing, even without GNOME, and waits a second for the answer. That slows down test suites that crash
 # programs on purpose. Disabled, not removed: ubuntu-server depends on it.
 - name: Turn off apport crash reports
   ansible.builtin.systemd_service:
